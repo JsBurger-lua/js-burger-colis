@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="style.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<title>jsBurger</title>
+<link rel="icon" href="img/F4L.png" type="image/gif">
+</head>
+<body>
+<div id="wrap">
+<button id="resetBtn">RESET</button>
+<button id="fondBtn">Mode Nuit</button>
+<button id="Score">Score: <span>0</span>
+</button>
+</button>
+<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/collar.png" alt="" id="collar" />
+<div id="cylinder"></div>
+<div id="driver"></div>
+<div id="pin">
+<div class="top"></div>
+<div class="bott"></div>
+</div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"></script>
+<script src="script.js" type="text/javascript"></script>
+</html>
