@@ -18,7 +18,22 @@ var minRot = -90,
     gamePaused = false,
     pin, cyl, driver, cylRotationInterval, pinLastDamaged;
 
+var score = 0;
+var scoreAffile = 0;
+var topScore = 0;
+
+if (localStorage.getItem("lockpickScore")) {
+    score = parseInt(localStorage.getItem("lockpickScore"));
+}
+if (localStorage.getItem("lockpickTopScore")) {
+    topScore = parseInt(localStorage.getItem("lockpickTopScore"));
+}
+
 $(function () {
+
+    $('#Score span').text(score);
+    $('#ScoreAffile span').text(scoreAffile);
+    $('#TopScore span').text(topScore);
 
     pin = $('#pin');
     cyl = $('#cylinder');
@@ -44,18 +59,33 @@ $(function () {
         }
     });
 
-$('body').on('keyup', function (e) {
-    if (!gameOver) {
-        if ([90, 81, 83, 68, 37, 38, 39, 40].includes(e.keyCode)) {
-            unpushCyl();
+    $('body').on('keyup', function (e) {
+        if (!gameOver) {
+            if ([90, 81, 83, 68, 37, 38, 39, 40].includes(e.keyCode)) {
+                unpushCyl();
+            }
         }
-    }
-});
+    });
+
     document.onkeyup = function (data) {
-        if (data.which == 27 ) {
+        if (data.which == 27) {
             console.log("EXIT FROM TEST SITE");
         }
     };
+
+    $("#resetBtn").on("click", function () {
+        hardReset();
+    });
+
+    $('#fondBtn').on('click', function () {
+        $('body').toggleClass('night');
+
+        if ($('body').hasClass('night')) {
+            $(this).text('Mode Jour');
+        } else {
+            $(this).text('Mode Nuit');
+        }
+    });
 });
 
 function pushCyl() {
@@ -118,6 +148,10 @@ function breakPin() {
     var tl = new TimelineLite();
     gamePaused = true;
     clearInterval(cylRotationInterval);
+
+    scoreAffile = 0;
+    $('#ScoreAffile span').text(scoreAffile);
+
     numPins--;
 
     var pinTop = pin.find('.top');
@@ -157,52 +191,29 @@ function outOfPins() {
     console.log("FAILED – No pins left");
 }
 
-var score = 0; // <-- Ajouter cette ligne au début
-
 function unlock() {
     console.log("SUCCESS – Lock opened!");
-    
-    // Incrémenter le score
+
     score++;
     $('#Score span').text(score);
+    localStorage.setItem("lockpickScore", score);
 
-    // Reset le lockpick automatiquement après succès
+    scoreAffile++;
+    $('#ScoreAffile span').text(scoreAffile);
+
+    if (scoreAffile > topScore) {
+        topScore = scoreAffile;
+        localStorage.setItem("lockpickTopScore", topScore);
+        $('#TopScore span').text(topScore);
+    }
+
     hardReset();
 
-    // Générer un nouveau solveDeg
     solveDeg = (Math.random() * 180) - 90;
     pinRot = 1;
     cylRot = 1;
     lastMousePos = 0;
 }
-
-$("#resetBtn").on("click", function () {
-    hardReset();
-});
-$('body').on('keydown', function (e) {
-    // 🔥 TOUCHE A = RESET 🔥
-    if (e.keyCode == 65) { // A pour reset (si tu veux)
-        hardReset();
-        return;
-    }
-
-    // Touches Z Q S D + Flèches pour pousser le cylindre
-    if (!userPushingCyl && !gameOver && !gamePaused) {
-        if ([90, 81, 83, 68, 37, 38, 39, 40].includes(e.keyCode)) {
-            pushCyl();
-        }
-    }
-});
-$('#fondBtn').on('click', function() {
-    $('body').toggleClass('night');
-
-    if ($('body').hasClass('night')) {
-        $(this).text('Mode Jour'); 
-    } else {
-        $(this).text('Mode Nuit');
-    }
-});
-
 
 function hardReset() {
     console.log("RESET BUTTON PRESSED");
@@ -217,6 +228,10 @@ function hardReset() {
     cylRot = 0;
     pinHealth = 100;
     numPins = 1;
+
+    scoreAffile = 0;
+    $('#ScoreAffile span').text(0);
+
     pin.css({ transform: "rotateZ(0deg)" });
     cyl.css({ transform: "rotateZ(0deg)" });
     driver.css({ transform: "rotateZ(0deg)" });
@@ -224,7 +239,7 @@ function hardReset() {
     TweenLite.to(pin.find('.top'), 0, { rotationZ: 0, x: 0, y: 0, opacity: 1 });
     TweenLite.to(pin.find('.bott'), 0, { rotationZ: 0, x: 0, y: 0, opacity: 1 });
 
-    console.log("RESET CONPLETE");
+    console.log("RESET COMPLETE");
 }
 
 Util = {};
